@@ -71,7 +71,7 @@ module Net; module SFTP; module Operations
           end
         end
 
-        if ::File.fnmatch(pattern, entry.name, flags)
+        if (::File.fnmatch(pattern, entry.name, flags) rescue false)
           if block_given?
             yield entry
           else
