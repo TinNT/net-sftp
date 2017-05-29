@@ -67,7 +67,7 @@ module Net; module SFTP
     # The hash of pending requests. Any requests that have been sent and which
     # the server has not yet responded to will be represented here.
     attr_reader :pending_requests
-
+    
     # Creates a new Net::SFTP instance atop the given Net::SSH connection.
     # This will return immediately, before the SFTP connection has been properly
     # initialized. Once the connection is ready, the given block will be called.
@@ -75,12 +75,13 @@ module Net; module SFTP
     #
     #   sftp = Net::SFTP::Session.new(ssh)
     #   sftp.loop { sftp.opening? }
-    def initialize(session, &block)
+    def initialize(session, protocol_version = nil, &block)
       @session    = session
+      @protocol_version = protocol_version
       @input      = Net::SSH::Buffer.new
       self.logger = session.logger
       @state      = :closed
-
+      
       connect(&block)
     end
 
@@ -876,7 +877,7 @@ module Net; module SFTP
         channel.on_close(&method(:when_channel_closed))
         channel.on_process(&method(:when_channel_polled))
 
-        send_packet(FXP_INIT, :long, HIGHEST_PROTOCOL_VERSION_SUPPORTED)
+        send_packet(FXP_INIT, :long, @protocol_version || HIGHEST_PROTOCOL_VERSION_SUPPORTED)
       end
 
       # Called when the SSH server closes the underlying channel.
