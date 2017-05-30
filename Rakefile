@@ -30,7 +30,7 @@ begin
 
     s.license = "MIT"
 
-    s.signing_key = File.join('/mnt/gems/', 'gem-private_key.pem')
+    s.signing_key = File.join('/mnt/gem/', 'gem-private_key.pem')
     s.cert_chain  = ['gem-public_cert.pem']
   end
   Jeweler::GemcutterTasks.new
